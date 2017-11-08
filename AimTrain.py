@@ -34,6 +34,7 @@ def dibujar():
         # Dibujar, aquí haces todos los trazos que requieras
         pygame.draw.rect(ventana, VERDE_BANDERA, (30, 30, ANCHO-60, ALTO-60), 5)
         pygame.draw.circle(ventana, ROJO, (ANCHO//2, ALTO//2), 200, 2)
+        pygame.draw.rect(ventana, ROJO, (ANCHO//2, ALTO//2 , 20, 20), 20)
 
         pygame.display.flip()   # Actualiza trazos
         reloj.tick(40)          # 40 fps
