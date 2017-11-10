@@ -1,0 +1,19 @@
+
+
+
+Autor: Rodrigo Rivera Salinas
+Matricula: A01375000
+
+
+                                Propuesta para proyecto final
+
+
+ Mi propuesta para el proyecto es hacer un snake, que sea un solo nivel, que tenga contador de puntos y que se generen obstaculos
+ aleatorios cada cierto tiempo dichos obstaculos se quitaran para que no se llene la pantalla de obstaculos pero se generaran
+ otros, la serpiente ira creciendo conforme se vaya comiendo las bolitas de punto.
+ Cuando llegue a cierto score te mandara a otra ventana que diga ganaste o en caso de chocar con algo que no sean los puntos
+ arrojara una ventana que diga perdiste :C
+
+
+
+
