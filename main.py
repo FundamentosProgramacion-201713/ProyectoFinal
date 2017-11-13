@@ -109,10 +109,16 @@ def iniciar():
 
         ventana.blit(imagenFondo, (0,0))
 
+        largeText = pygame.font.Font('freesansbold.ttf', 115)
+        TextSurf, TextRect = text_objects("A bit Racey", largeText)
+        TextRect.center = ((ANCHO // 2), (ALTO // 2))
+        ventana.blit(TextSurf, TextRect)
+        '''
         mensajeEnPantalla("Space Invaders", ventana, 150, 100, 100)
         mensajeEnPantalla("Hecho por Luis Alcántara", ventana, 150, 200, 50)
         mensajeEnPantalla("Presiona SPACE para Comenzar", ventana, 150, 400, 50)
         mensajeEnPantalla("Presiona Q para Salir", ventana, 150, 450, 50)
+        '''
 
         pygame.display.flip()
         reloj.tick(40)

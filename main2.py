@@ -9,6 +9,7 @@ ANCHO = 800
 ALTO = 600
 BLANCO = (255,255,255)
 NEGRO = (0,0,0)
+ROJO = (255, 0, 0)
 imgFondo = pygame.image.load("fondo.png")
 imgNave = pygame.image.load("nave8bit.png")
 imgAsteroide = pygame.image.load("asteroide8bit.png")
@@ -31,7 +32,7 @@ def actualizarDisparos(disparos):
     for disparo in disparos:
         if disparo.rect.y < 0:
             disparos.remove(disparo)
-        disparo.rect.y -= 10
+        disparo.rect.y -= 15
 
 # Actualiza la posición de los asteroides
 def actualizarAsteroides(asteroides, tiempoInicial):
@@ -96,6 +97,28 @@ def validarControlesNave(nave, disparos, universo):
         universo.add(disparo)
     return nave, disparos
 
+def text_objects(text, font):
+    ventanaTexto = font.render(text, True, NEGRO)
+    return ventanaTexto, ventanaTexto.get_rect()
+
+# Función para crear un botón
+def boton (msg, x, y, ancho, alto, ic, ac, ventana ):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    if (x+ancho > mouse[0] > x) and (y+alto > mouse[1] > y):
+        pygame.draw.rect(ventana, ac, (x, y, ancho, alto))
+        if click[0] == 1:
+            return False
+        else:
+            return True
+    else:
+        pygame.draw.rect(ventana, ic, (x, y, ancho, alto))
+        smallText = pygame.font.Font("freesansbold.ttf", 20)
+        ventanaTexto, textoRect = text_objects(msg, smallText)
+        textoRect.center = ( (x+(ancho/2)), (y+(alto/2)) )
+        ventana.blit(ventanaTexto, textoRect)
+        return True
+
 # Función para iniciar el juego
 def iniciar():
     pygame.init()
@@ -104,8 +127,8 @@ def iniciar():
     menu = True
 
     # -----------------------------MENÚ---------------------------
-    pygame.mixer.music.load('music.mp3')
-    pygame.mixer.music.play(0)
+    #pygame.mixer.music.load('music.mp3')
+    #pygame.mixer.music.play(0)
 
     while menu:
         for evento in pygame.event.get():
@@ -115,10 +138,14 @@ def iniciar():
             if evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
                 menu = False
         ventana.blit(imgFondo, (0, 0))
+        menu = boton("Inicio", 350, 200, 100, 100, ROJO, NEGRO, ventana)
+        '''
         mensajeEnPantalla("Space Invaders", ventana, 150, 100, 100)
         mensajeEnPantalla("Hecho por Luis Alcántara", ventana, 150, 200, 50)
         mensajeEnPantalla("Presiona SPACE para Comenzar", ventana, 150, 400, 50)
         mensajeEnPantalla("Presiona Q para Salir", ventana, 150, 450, 50)
+        '''
+
 
         pygame.display.update()
         reloj.tick(40)
@@ -146,12 +173,12 @@ def iniciar():
     vidas = 3
 
     # Asteroides
-    for x in range(50):
+    for x in range(300):
         asteroide = pygame.sprite.Sprite()
         asteroide.image = imgAsteroide
         asteroide.rect = imgAsteroide.get_rect()
         asteroide.rect.x = random.randint(0, ANCHO - asteroide.rect.width)
-        asteroide.rect.y = random.randint(-1000, -50)
+        asteroide.rect.y = random.randint(-1000, -250)
         asteroide.inicio = random.randint(0, 3)
         asteroide.velocidad = random.randint(1, 5)
         asteroides.add(asteroide)
@@ -159,7 +186,6 @@ def iniciar():
 
     # ---------------------------JUEGO----------------------------
     tiempoInicial = int(time.time())
-    print(tiempoInicial)
     while jugando:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
