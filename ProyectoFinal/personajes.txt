@@ -1,0 +1,5 @@
+70 MARIO 1 NES_Perfil.png 1 NES_Caminar_1.png 12 16
+290 MARIO_3 1 MARIO3_Perfil.png 2 MARIO3_Caminar_1.png 12 15
+510 MARIO_WORLD 1 SUPER_Perfil.png 3 SUPER_Caminar_1.png 15 20
+730 PIKACHU 0 NES_Perfil.png 4 NES_Caminar_1.png 12 16
+950 ASH 0 MARIO3_Perfil.png 5 MARIO3_Caminar_1.png 12 15
