@@ -5,7 +5,13 @@
 
 
 
+
 import pygame
+import random
+
+
+
+
 
 # Dimensiones de la pantalla
 ANCHO = 800
@@ -14,31 +20,38 @@ ALTO = 600
 BLANCO = (255,255,255)  # R,G,B en el rango [0,255]
 VERDE_BANDERA = (0, 122, 0)
 ROJO = (255, 0, 0)
+NEGRO = (0,0,0)
+pygame.font.init()
+font = pygame.font.SysFont('Consolas', 48)
 
-def dibujarJuego(ventana, btnJugar, lista):
-    btnJugar.rect.left = ANCHO - btnJugar.rect.width
-    btnJugar.rect.top = ALTO - btnJugar.rect.height
-    ventana.blit(btnJugar.image, btnJugar.rect)
-    #Dibujar todos los enemigos
-    for enemigo in lista:
+def dibujarJuego(ventana, listaEnemigos):
+    for enemigo in listaEnemigos:
         ventana.blit(enemigo.image, enemigo.rect)
+    #btnEnemigo = btnEnemigo.image
+    #btnEnemigo.rect.left = ANCHO//2 - btnEnemigo.rect.width
+    #btnEnemigo.rect.top = ALTO//2 - btnEnemigo.rect.height
+
+    #Dibujar todos los enemigos
 
 
-def dibujarMenu(ventana, btnJugar):
+
+
+def dibujarMenu(ventana, btnJugar, fondo):
+    ventana.blit(fondo.image, fondo.rect)
     ventana.blit(btnJugar.image, btnJugar.rect)
 
+def generarEnemigos(listaEnemigos, imgEnemigo):
+    for x in range(5):
+        for y in range(4):
 
-def generarEnemigos(listaEnemigos, imgBotonPlay):
-    for x in range(3):
-        for y in range(3):
-            cx = 50+ x*260
-            cy = 100 + y*100
-            nuevo = pygame.sprite.Sprite()
-            nuevo.image = imgBotonPlay
-            nuevo.rect = imgBotonPlay.get_rect
-            nuevo.rect.left = cx
-            nuevo.rect.top = cy
-            listaEnemigos.append(nuevo)
+            cx = 50 + x * 150
+            cy = 50 + y * 100
+            enemigo = pygame.sprite.Sprite()
+            enemigo.image = imgEnemigo
+            enemigo.rect = imgEnemigo.get_rect()
+            enemigo.rect.left = cx
+            enemigo.rect.top = cy
+            listaEnemigos.append(enemigo)
 
 
 
@@ -57,14 +70,34 @@ def dibujar():
     imgBotonPlay = pygame.image.load("botonPlay.png")
     btnJugar =pygame.sprite.Sprite() #SPRITE
     btnJugar.image = imgBotonPlay
-    btnJugar.rect = imgBotonPlay.get_rect(center = (ANCHO//2, ALTO//2))
+    btnJugar.rect = imgBotonPlay.get_rect(center=(ANCHO//2, ALTO//2))
+
+    #enemigo
+
+
+
+    #fondo
+    imgFondo = pygame.image.load("gun range.jpg")
+    fondo = pygame.sprite.Sprite()
+    fondo.image = imgFondo
+    fondo.rect = imgFondo.get_rect(center=(ANCHO//2, ALTO//2))
 
     #enemigos
     listaEnemigos= []
-    generarEnemigos(listaEnemigos, imgBotonPlay)
+    imgBlanco = pygame.image.load("blancoEnemigo.png")
+    generarEnemigos(listaEnemigos, imgBlanco)
 
-    #balas
-    listaBalas = []
+    #musica y efectos
+    pygame.mixer.init()
+    pygame.mixer.music.load("hotPursuit.mp3")
+    pygame.mixer.music.play(-1)
+
+
+    efecto = pygame.mixer.Sound("disparo.wav")
+
+
+
+
 
 
     timer = 0
@@ -74,36 +107,49 @@ def dibujar():
             if evento.type == pygame.QUIT:  # El usuario hizo click en el botón de salir
                 termina = True
             elif evento.type == pygame.MOUSEBUTTONDOWN:
-                xm, ym = pygame.mouse.get_pos()
-                if estado == "menu":
+                mouseX, mouseY = pygame.mouse.get_pos()
 
+                if estado == "menu":
                     xb, yb, anchoB, altoB = btnJugar.rect
-                    if xm>=xb and xm <=xb + anchoB:
-                        if ym >= yb and ym <= yb + altoB:
+                    if mouseX>=xb and mouseX <=xb + anchoB:
+                        if mouseY >= yb and mouseY <= yb + altoB:
+                            pygame.draw.rect(ventana, ROJO, ((ALTO // 2) + 55, (ALTO // 2) - 20, 90, 40), 1)
                             estado = "jugando"
                 elif estado == "jugando":
-                    nuevo= pygame.sprite.Sprite()
-                    nuevo.image= imgBotonPlay
-                    nuevo.rect = imgBotonPlay.get_rect
-                    nuevo.rect.left = xm
-                    nuevo.rect.top= ym
+                    xe, ye, anchoE, altoE = imgBlanco
+                    if xe >= xe and xe <= xe + anchoE:
+                        if ye >= ye and ye<= ye + altoE:
+                            estado = "menu"
+                    nuevo = pygame.sprite.Sprite()
+                    nuevo.image = imgBlanco
+                    nuevo.rect = imgBlanco.get_rect()
+                    nuevo.rect.left = mouseX
+                    nuevo.rect.top = mouseY
+
 
                     listaEnemigos.append(nuevo)
 
 
         # Borrar pantalla
-        ventana.fill(BLANCO)
+        ventana.fill(NEGRO)
 
         timer += 1/40
-        if timer > 2:
-            #acciones
+        if timer >= 3:   #genera Enemigos cada 5 segundos y actualiza el timer a 0
+
             timer = 0
+            generarEnemigos(listaEnemigos, imgBlanco)
+            #generarEnemigos(listaEnemigos, imgBlanco)
 
         # Dibujar, aquí haces todos los trazos que requieras
         if estado == "menu":
-            dibujarMenu(ventana, btnJugar)
+
+            dibujarMenu(ventana, btnJugar, fondo)
+
         elif estado == "jugando":
-            dibujarJuego(ventana, btnJugar, listaEnemigos)
+            dibujarJuego(imgBlanco, listaEnemigos)
+        ventana.blit(font.render("AimTrain", True, (BLANCO)), (32, 48))
+
+
 
 
 
