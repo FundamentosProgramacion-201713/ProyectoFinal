@@ -4,7 +4,8 @@
 
 
 
-
+def funcion():
+    pass
 
 import pygame
 import random
