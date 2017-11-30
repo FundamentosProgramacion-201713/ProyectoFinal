@@ -145,10 +145,11 @@ def dibujar():
         if estado == "menu":
 
             dibujarMenu(ventana, btnJugar, fondo)
+            ventana.blit(font.render("AimTrain", True, (BLANCO)), (32, 48))
 
         elif estado == "jugando":
             dibujarJuego(imgBlanco, listaEnemigos)
-        ventana.blit(font.render("AimTrain", True, (BLANCO)), (32, 48))
+
 
 
 
