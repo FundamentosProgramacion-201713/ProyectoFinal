@@ -397,7 +397,6 @@ def dibujar(dx):
                 vidasE = {}
                 for enemigo in listaEnemigos:
                     vidasE[enemigo] = 2
-            print(dx)
             for enemigo in listaEnemigos: # Extrae las posisciones "x" de cada enemigo
                 xEnemigos.append(enemigo.rect.left)
             for enemigo in listaEnemigos: # Extrae las posiciones "y" de cada enemigo
