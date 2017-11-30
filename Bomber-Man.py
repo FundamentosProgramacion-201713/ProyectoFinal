@@ -97,22 +97,32 @@ def dibujarMorty(ventana, imagenRick, x, y):
     ventana.blit(imagenRick, (x, y))
 
 def dibujarScores(ventana, btnScores, nombresOrdenados, puntajesOrdenados):
-    font = pygame.font.SysFont("comicsansms", 72)
-    primer = nombresOrdenados[0]
-    texto1L = font.render(primer, True, (0, 0, 0))
-    segundo = nombresOrdenados [1]
-    texto2L = font.render(segundo, True, (0, 0, 0))
-    tercero = nombresOrdenados[2]
-    texto3L = font.render(tercero, True, (0, 0, 0))
-    cuarto = nombresOrdenados[3]
-    texto4L = font.render(cuarto, True, (0, 0, 0))
-    quinto = nombresOrdenados [4]
-    texto5L = font.render(quinto, True, (0, 0, 0))
-    ventana.blit(texto1L, (45,195 + 56*0))
-    ventana.blit(texto2L, (45, 195 + 56 * 1))
-    ventana.blit(texto3L, (45, 195 + 56 * 2))
-    ventana.blit(texto4L, (45, 195 + 56 * 3))
-    ventana.blit(texto5L, (45, 195 + 56 * 4))
+    font = pygame.font.SysFont("eras bold itc", 60)
+    primer = "1.-" + nombresOrdenados[0]
+    texto1L = font.render(primer, True, (244, 244, 244))
+    segundo = "2.-" + nombresOrdenados [1]
+    texto2L = font.render(segundo, True, (244, 244, 244))
+    tercero = "3.-" + nombresOrdenados[2]
+    texto3L = font.render(tercero, True, (244, 244, 244))
+    cuarto = "4.-" + nombresOrdenados[3]
+    texto4L = font.render(cuarto, True, (244, 244, 244))
+    quinto = "5.-" + nombresOrdenados [4]
+    texto5L = font.render(quinto, True, (244, 244, 244))
+    ventana.blit(texto1L, (ANCHO//4 - 60,195 + 56*0))
+    ventana.blit(texto2L, (ANCHO//4 - 60, 195 + 56 * 1))
+    ventana.blit(texto3L, (ANCHO//4 - 60, 195 + 56 * 2))
+    ventana.blit(texto4L, (ANCHO//4 - 60, 195 + 56 * 3))
+    ventana.blit(texto5L, (ANCHO//4 - 60, 195 + 56 * 4))
+    puntaje1 = font.render(puntajesOrdenados[0], True, (244, 244, 244))
+    puntaje2 = font.render(puntajesOrdenados[1], True, (244, 244, 244))
+    puntaje3 = font.render(puntajesOrdenados[2], True, (244, 244, 244))
+    puntaje4 = font.render(puntajesOrdenados[3], True, (244, 244, 244))
+    puntaje5 = font.render(puntajesOrdenados[4], True, (244, 244, 244))
+    ventana.blit(puntaje1, (ANCHO - ANCHO//4, 195 + 56 * 0))
+    ventana.blit(puntaje2, (ANCHO - ANCHO//4, 195 + 56 * 1))
+    ventana.blit(puntaje3, (ANCHO - ANCHO//4, 195 + 56 * 2))
+    ventana.blit(puntaje4, (ANCHO - ANCHO//4, 195 + 56 * 3))
+    ventana.blit(puntaje5, (ANCHO - ANCHO//4, 195 + 56 * 4))
     ventana.blit(btnScores.image, btnScores.rect)
 
 def dibujarMadMorty(ventana, btnMadMorty):
@@ -421,11 +431,10 @@ def dibujar():
     nombres = entradaN.readlines()
     entradaN.close()
     diccionarioNombre = {}
-    for k in range(len(nombres)):
+    for k in range(len(puntajes)):
         nombre = nombres[k]
         puntaje = puntajes[k]
         diccionarioNombre[nombre] = puntaje
-        print(diccionarioNombre)
     puntajes.sort()
     puntajes.reverse()
     puntajesOrdenados = []
@@ -875,6 +884,41 @@ def dibujar():
                     pruebaCajas = ['152&100', '402&100', '602&100', '152&150', '202&150', '152&200', '302&200', '352&200', '452&200', '702&200', '2&250', '52&250', '102&250', '252&250', '302&250', '502&250', '552&250', '652&250', '502&300', '52&350', '152&350', '202&350', '302&350', '552&350', '602&350', '702&350', '152&400', '352&400', '552&400', '52&450', '252&450', '302&450', '352&450', '402&450', '452&450', '552&450', '652&450', '752&450', '52&500', '152&500', '302&500', '352&500', '402&500', '652&500']
                     mover = True
                     estado = "scores"
+                    salidaN = open("nombres.txt", "a")
+                    salidaP = open("puntajes.txt", "a")
+                    f1 ="\n" + str(nombreJ1)
+                    f2 ="\n" + str(puntajeMorty)
+                    f3 ="\n" + str(nombreJ2)
+                    f4 ="\n" + str(puntajeRick)
+                    salidaN.write(f1)
+                    salidaP.write(f2)
+                    salidaN.write(f3)
+                    salidaP.write(f4)
+                    salidaN.close()
+                    salidaP.close()
+
+                    entradaP = open("puntajes.txt", "r")
+                    puntajes = entradaP.readlines()
+                    entradaP.close()
+                    entradaN = open("nombres.txt", "r")
+                    nombres = entradaN.readlines()
+                    entradaN.close()
+                    for k in range(len(puntajes)):
+                        nombre = nombres[k]
+                        puntaje = puntajes[k]
+                        diccionarioNombre[nombre] = puntaje
+                    puntajes.sort()
+                    puntajes.reverse()
+                    puntajesOrdenados = []
+                    nombresOrdenados = []
+
+                    for k in puntajes:  # Promedios
+                        for f in diccionarioNombre:  # Nombres
+                            if k == diccionarioNombre[f]:
+                                if f not in nombresOrdenados:
+                                    nombresOrdenados.append(f)
+                                    puntajesOrdenados.append(k)
+
         pygame.display.flip()   # Actualiza trazos
         reloj.tick(valorTimer)          # 40 fpsS
     print("PUNTAJE RICK:",puntajeRick)
