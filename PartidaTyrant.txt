@@ -1,0 +1,1 @@
+﻿PARTIDA TYRANTRegistro,NoneEstado,NoneNivel,NoneVidas,NonePuntaje,NoneMunición,None

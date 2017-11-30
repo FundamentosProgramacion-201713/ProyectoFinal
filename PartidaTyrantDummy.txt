@@ -1,0 +1,7 @@
+PARTIDA TYRANT
+Registro,0
+Estado,jugando
+Nivel,nivel1
+Vidas,3
+Puntaje,0
+Municion,None
