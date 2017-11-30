@@ -43,7 +43,7 @@ def dibujarMenu(ventana, btnJugar): # Dibuja en pantalla los botones del menu.
     ventana.blit(texto2, (ANCHO // 2 - 120, ALTO - (btnJugar.rect.height + 50)))
 
 
-def dibujarJuego(ventana, elmer, listaEnemigos, listaBalas): #Dibujo de objetos y efectos a lo largo del juego.
+def dibujarJuego(ventana, elmer, listaEnemigos, listaBalas, imgBugs): #Dibujo de objetos y efectos a lo largo del juego.
     global vida
     global score
     global estado
@@ -63,7 +63,7 @@ def dibujarJuego(ventana, elmer, listaEnemigos, listaBalas): #Dibujo de objetos 
 
     #Verificar si bugs se sale de la pantalla.
     for bugs in listaEnemigos:
-        bugs.rect.left -= 5
+        bugs.rect.left -= 8
         if bugs.rect.left <= -100 or bugs.rect.top >= ALTO:
             bugs.rect.left = ANCHO - 100
             bugs.rect.top = randrange(0, 500, 1)
@@ -100,7 +100,7 @@ def dibujarJuego(ventana, elmer, listaEnemigos, listaBalas): #Dibujo de objetos 
     texto2 = fuente.render("Bunnies atrapados: "+str(contadorColisiones), 1, BLANCO)
     ventana.blit(texto2, (0, 0))
 
-    if vida<=0:
+    if vida <= 0:
         estado="sin_vida"
 
 
@@ -116,8 +116,9 @@ def generarEnemigos(listaEnemigos, imgBugs): #Generamos a BUGS BUNNY.
         listaEnemigos.append(bugs)
 
 
+
 def generarBalas(listaBalas, listaEnemigos, imgBugs): #Generamos las balas
-    
+
     for bala in listaBalas:
         bala.rect.left += 5
 
@@ -313,7 +314,7 @@ def jugar (): # Función dónde se está programando el juego.
             dibujarInstrucciones(ventana, btnJugar)
 
         elif estado == "jugando1":
-            dibujarJuego(ventana, elmer, listaEnemigos, listaBalas)
+            dibujarJuego(ventana, elmer, listaEnemigos, listaBalas, imgBugs)
             generarBalas(listaBalas, listaEnemigos, imgBugs)
             if moverPersonaje:
                 if elmer.rect.top + dyPersonaje < ALTO - elmer.rect.height and elmer.rect.top + dyPersonaje > 0:
