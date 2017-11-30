@@ -92,15 +92,6 @@ def actualizarBalas(listaBalas, listaEnemigos, marcador, vidasE, aceleracion):
                     marcador += 1  # Suma un punto al marcador
                 borrarBala = True
                 break  # Termina el Ciclo
-        """
-        for k in range(len(listaEnemigos) - 1, -1, -1):
-            enemigo = listaEnemigos[k]
-            if bala.rect.colliderect(enemigo): # Enemigo eliminado
-                listaEnemigos.remove(enemigo)
-                marcador += 1 # Suma un punto al marcador
-                borrarBala = True
-                break  # Termina el Ciclo
-        """
         if borrarBala:
             listaBalas.remove(bala)
     return marcador
