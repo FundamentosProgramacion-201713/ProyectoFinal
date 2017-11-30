@@ -233,7 +233,7 @@ def dibujar():
             ventana.blit(frameActual.image, frameActual.rect)
             ventana.blit(frameActual2.image, frameActual2.rect)
 
-            if cont>=15:
+            if cont>=25:
                 ventana.blit(final, (0, 0))
                 ventana.blit(texto1, (ANCHO // 2 -385,100))
             if cont<=-10:
