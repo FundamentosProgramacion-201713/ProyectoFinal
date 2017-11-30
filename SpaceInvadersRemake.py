@@ -71,13 +71,28 @@ def moverJugador(jugador, Dx):
             jugador.rect.left += Dx
 
 # Elimina un enemigo y una bala en caso de colisión
-def actualizarBalas(listaBalas, listaEnemigos, marcador):
+def actualizarBalas(listaBalas, listaEnemigos, marcador, vidasE, aceleracion):
     for bala in listaBalas:  # NO DEBEN  modificar la conexion
         bala.rect.top -= 15
         if bala.rect.top <= 0:
             listaBalas.remove(bala)
             continue  # Continua al siguiente indice del ciclo for de arriba, como si hubiera terminado el resto de instrucciones del for
         borrarBala = False
+        for k in range(len(listaEnemigos)-1, -1,-1):
+            enemigo = listaEnemigos[k]
+
+            if bala.rect.colliderect(enemigo): # Enemigo eliminado
+                if aceleracion == 6:
+                    vidasE[enemigo] -= 1
+                    if vidasE[enemigo] == 0:
+                        listaEnemigos.remove(enemigo)
+                        marcador += 1 # Suma un punto al marcador
+                else:
+                    listaEnemigos.remove(enemigo)
+                    marcador += 1  # Suma un punto al marcador
+                borrarBala = True
+                break  # Termina el Ciclo
+        """
         for k in range(len(listaEnemigos) - 1, -1, -1):
             enemigo = listaEnemigos[k]
             if bala.rect.colliderect(enemigo): # Enemigo eliminado
@@ -85,6 +100,7 @@ def actualizarBalas(listaBalas, listaEnemigos, marcador):
                 marcador += 1 # Suma un punto al marcador
                 borrarBala = True
                 break  # Termina el Ciclo
+        """
         if borrarBala:
             listaBalas.remove(bala)
     return marcador
@@ -277,6 +293,9 @@ def dibujar(dx):
     listaEnemigos = []
     imgEnemigo = pygame.image.load("alien1.png")
     generarEnemigos(listaEnemigos, imgEnemigo)
+    vidasE = {}
+    for enemigo in listaEnemigos:
+        vidasE[enemigo] = 2
 
     # Bala
     listaBalas = []
@@ -375,6 +394,10 @@ def dibujar(dx):
             if len(listaEnemigos)==0: # Genera nuevos enemigos en caso de no haber ninguno
                 generarEnemigos(listaEnemigos, imgEnemigo)
                 dx -= 2 # Reduce la aceleración para disminuir la dificultad de progresar
+                vidasE = {}
+                for enemigo in listaEnemigos:
+                    vidasE[enemigo] = 2
+            print(dx)
             for enemigo in listaEnemigos: # Extrae las posisciones "x" de cada enemigo
                 xEnemigos.append(enemigo.rect.left)
             for enemigo in listaEnemigos: # Extrae las posiciones "y" de cada enemigo
@@ -394,7 +417,7 @@ def dibujar(dx):
                 dx += aceleracion/40
             dx *= c # Cambia o no de dirección
 
-            marcador = actualizarBalas(listaBalas, listaEnemigos, marcador) # Actualiza balas y regresa marcador actual
+            marcador = actualizarBalas(listaBalas, listaEnemigos, marcador, vidasE, aceleracion) # Actualiza balas y regresa marcador actual
             moverEnemigos(listaEnemigos, dx, c)
 
             # Escribe dificultad y puntuación adtual
@@ -411,7 +434,8 @@ def dibujar(dx):
             dibujarPerder(ventana, botonPerdido, botonPuntacion, botonRegresar, marcador)
             jugador.rect.left = ANCHO//2
             listaEnemigos = []
-            dx = 2
+            dx = 4
+            listaBalas = []
 
         pygame.display.flip()   # Actualiza trazos
         reloj.tick(40)          # 40 fps
