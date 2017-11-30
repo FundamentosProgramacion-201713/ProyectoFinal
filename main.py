@@ -53,7 +53,7 @@ def actualizarDisparos(disparos):
 # Actualiza la posición de los asteroides
 def actualizarAsteroides(asteroides, tiempoInicial, universo):
     for asteroide in asteroides:
-        if asteroide.rect.x < 0:
+        if asteroide.rect.x < 0-asteroide.rect.width:
             asteroide.rect.y = random.randint(asteroide.rect.height, ALTO -asteroide.rect.height )
             asteroide.rect.x = random.randint(800, 2000)
         if asteroide.timer == 15:
@@ -251,6 +251,8 @@ def iniciar():
             mensajeEnPantalla("Mover", ventana, 130, 250, 50)
             ventana.blit(imgBE, (480,100))
             mensajeEnPantalla("Disparar", ventana, 510, 250, 50)
+            mensajeEnPantalla("Las imágenes y el contenido es propiedad ", ventana, 300, 400, 20)
+            mensajeEnPantalla("de Rick and Morty (creado por Justin Roilland y Dan Harmon)", ventana, 300, 420, 20)
             opcion = boton("Regresar", 325, 520, 150, 50, BLANCO, NEGRO, ventana, "")
             if opcion == False:
                 nivel = 0
@@ -258,6 +260,9 @@ def iniciar():
         reloj.tick(40)
     jugando = True
     pygame.mixer.music.stop()
+    pygame.mixer.music.load("Sonidos/stranger.wav")
+    pygame.mixer.music.set_volume(.5)
+    pygame.mixer.music.play(0)
     showMe.play()
     # ---------------------------Sprites--------------------------
 
@@ -353,12 +358,13 @@ def iniciar():
             wubba.play()
         pygame.display.update()
         reloj.tick(60)
-    validarPuntuacion(puntuacion)
     final = True
     while final:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 final = False
+
+
         ventana.blit(imgFondo, (0, 0))
         ventana.blit(imgFondo, (x, 0))
         ventana.blit(imgFondo, (ANCHO + x, 0))
@@ -372,8 +378,9 @@ def iniciar():
 
         pygame.display.update()
         reloj.tick(60)
-    pygame.quit()
 
+    pygame.quit()
+    validarPuntuacion(puntuacion)
 
 
 def main():
