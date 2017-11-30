@@ -390,6 +390,7 @@ def dibujar():
     pygame.quit()  # termina pygame
 
 
+
 def main():
     jugar=dibujar()
     while jugar:
