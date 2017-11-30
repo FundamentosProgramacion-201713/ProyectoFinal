@@ -12,11 +12,12 @@ NEGRO = (0,0,0)
 ROJO = (255, 0, 0)
 # Imagenes para el juego
 imgFondo = pygame.image.load("Fondos/fondo.png")
-imgNave = pygame.image.load("Sprites/nave8bit.png")
-imgAsteroide = pygame.image.load("Sprites/asteroide8bit.png")
-imgAsteroideD = pygame.image.load("Sprites/asteroide8bitD.png")
-imgAsteroideA = pygame.image.load("Sprites/asteroide8bitA.png")
-imgAsteroideI = pygame.image.load("Sprites/asteroide8bitI.png")
+imgNave = pygame.image.load("Imagenes/nave.png")
+imgAsteroide = pygame.image.load("Imagenes/asteroide.png")
+imgAsteroideD = pygame.image.load("Imagenes/asteroideM.png")
+imgAsteroideA = pygame.image.load("Imagenes/asteroideG.png")
+imgAsteroideI = pygame.image.load("Imagenes/asteroideM.png")
+imgLookMorty = pygame.image.load("Imagenes/look.png")
 pygame.mixer.init()
 
 # Imágenes para el menú
@@ -29,8 +30,12 @@ disparofx = pygame.mixer.Sound("Sonidos/disparosLaser.wav")
 disparofx.set_volume(.3)
 disparofxFin = pygame.mixer.Sound("Sonidos/disparosLaserFin.wav")
 disparofxFin.set_volume(.3)
+showMe = pygame.mixer.Sound("Sonidos/showMe.wav")
+wubba = pygame.mixer.Sound("Sonidos/wubba.wav")
+wubba.set_volume(.3)
 
-imgDisparo = pygame.image.load("Sprites/disparo.png")
+imgDisparo = pygame.image.load("Imagenes/disparo.png")
+imgGameOver = pygame.image.load("Imagenes/gameover.png")
 
 # Mostrar un mensaje en pantalla
 def mensajeEnPantalla(m, ventana, x, y, tamano):
@@ -41,16 +46,16 @@ def mensajeEnPantalla(m, ventana, x, y, tamano):
 # Actualiza la posición de los disparos
 def actualizarDisparos(disparos):
     for disparo in disparos:
-        if disparo.rect.y < 0:
+        if disparo.rect.x > 800:
             disparos.remove(disparo)
-        disparo.rect.y -= 15
+        disparo.rect.x += 15
 
 # Actualiza la posición de los asteroides
 def actualizarAsteroides(asteroides, tiempoInicial, universo):
     for asteroide in asteroides:
-        if asteroide.rect.y > 600:
-            asteroide.rect.y = random.randint(-500, -100)
-            asteroide.rect.x = random.randint(10, 790)
+        if asteroide.rect.x < 0:
+            asteroide.rect.y = random.randint(asteroide.rect.height, ALTO -asteroide.rect.height )
+            asteroide.rect.x = random.randint(800, 2000)
         if asteroide.timer == 15:
             asteroide.image = imgAsteroide
         elif asteroide.timer == 30:
@@ -63,8 +68,7 @@ def actualizarAsteroides(asteroides, tiempoInicial, universo):
             asteroide.timer = 0
 
         asteroide.timer += 1
-        asteroide.velocidad = random.randint(1, 10)
-        asteroide.rect.y += asteroide.velocidad
+        asteroide.rect.x -= asteroide.velocidad
 
     return asteroides, universo
 
@@ -97,21 +101,13 @@ def validarControlesNave(nave, disparos, universo, timer):
     if teclasPresionadas[pygame.K_DOWN] and nave.rect.y < ALTO - nave.rect.height:
         nave.rect.y += 10
     if teclasPresionadas[pygame.K_SPACE] and timer > 4/60:
-        # Disparo Izquierdo
-        disparo = pygame.sprite.Sprite()
-        disparo.image = imgDisparo
-        disparo.rect = imgDisparo.get_rect()
-        disparo.rect.x = nave.rect.x - 3
-        disparo.rect.y = nave.rect.y
-        disparos.add(disparo)
-        universo.add(disparo)
 
-        # Disparo Derecho
+        # Disparo
         disparo = pygame.sprite.Sprite()
         disparo.image = imgDisparo
         disparo.rect = imgDisparo.get_rect()
         disparo.rect.x = nave.rect.x + nave.rect.width - 10
-        disparo.rect.y = nave.rect.y
+        disparo.rect.y = nave.rect.y + nave.rect.height // 2
         disparos.add(disparo)
         universo.add(disparo)
         timer = 0
@@ -144,12 +140,49 @@ def boton (msg, x, y, ancho, alto, ic, ac, ventana, accion):
         ventana.blit(ventanaTexto, textoRect)
         return True
 
-# Función para iniciar el juego
+# Función para validar el puntaje y en todo caso escribirlo en el archivo
 def validarPuntuacion(puntuacion):
     entrada = open("Archivos/informacion.txt", "r")
+    datos = entrada.readlines()
+    entrada.close()
+    puntuaciones = []
+    nombres = []
+    nuevasP = []
+    for x in range(len(datos)):
+        datos[x] = datos[x].rstrip()
+        lista = datos[x].split(":")
+        puntuaciones.append(int(lista[1]))
+        nombres.append(lista[0])
 
+    if puntuacion > min(puntuaciones):
+        puntuaciones[puntuaciones.index(min(puntuaciones))] = puntuacion
+        nombre = input("¡Entras en los primeros tres lugares! Escribe tu nombre: ")
+        if puntuacion > puntuaciones[0]:
+            intermedio = puntuaciones[0]
+            intermedioN = nombres[0]
+            puntuaciones[0] = puntuacion
+            nombres[0] = nombre
+            puntuaciones[2] = puntuaciones[1]
+            nombres[2] = nombres[1]
+            puntuaciones[1] = intermedio
+            nombres[1] = intermedioN
+        elif puntuacion > puntuaciones[1]:
+            intermedio = puntuaciones[1]
+            intermedioN = nombres[1]
+            puntuaciones[1] = puntuacion
+            nombres[1] = nombre
+            puntuaciones[2] = intermedio
+            nombres[2] = intermedioN
+        else:
+            nombres[2] = nombre
+        datos = ""
+        for x in range(3):
+            datos += nombres[x] + ":" + str(puntuaciones[x]) + "\n"
+        salida = open("Archivos/informacion.txt", "w")
+        salida.write(datos)
+        salida.close()
 
-
+# Función para iniciar el juego
 def iniciar():
 
     pygame.init()
@@ -158,11 +191,11 @@ def iniciar():
     menu = True
 
     # -----------------------------MENÚ---------------------------
-    pygame.mixer.music.load('Sonidos/music.mp3')
-
-    # pygame.mixer.music.play(0)
     x = 0
     nivel = 0
+    pygame.mixer.music.load("Sonidos/menuMusic.mp3")
+    pygame.mixer.music.set_volume(.5)
+    pygame.mixer.music.play(0)
     while menu:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -189,22 +222,43 @@ def iniciar():
                 nivel = 2
         elif nivel == 1:
             mensajeEnPantalla("Puntuaciones Altas", ventana, 130, 40, 80)
-            mensajeEnPantalla("Jugadores:", ventana, 70, 120, 50)
+
+            entrada = open("Archivos/informacion.txt", "r")
+            datos = entrada.readlines()
+            nombres = []
+            puntuaciones = []
+
+            for linea in datos:
+                linea = linea.rstrip()
+                linea = linea.split(":")
+                nombres.append(linea[0])
+                puntuaciones.append(linea[1])
+
+            mensajeEnPantalla(nombres[0], ventana, 140, 170, 70)
+            mensajeEnPantalla(nombres[1], ventana, 140, 250, 70)
+            mensajeEnPantalla(nombres[2], ventana, 140, 330, 70)
+
+            mensajeEnPantalla(puntuaciones[0], ventana, 500, 170, 70)
+            mensajeEnPantalla(puntuaciones[1], ventana, 500, 250, 70)
+            mensajeEnPantalla(puntuaciones[2], ventana, 500, 330, 70)
+
             opcion = boton("Regresar", 325, 520, 150, 50, BLANCO, NEGRO, ventana, "")
             if opcion == False:
                 nivel = 0
         elif nivel == 2:
-            ventana.blit(imgTeclas, (70,100))
-            mensajeEnPantalla("Mover", ventana, 115, 300, 50)
-            ventana.blit(imgBE, (450,130))
-            mensajeEnPantalla("Disparar", ventana, 510, 300, 50)
+            ventana.blit(imgTeclas, (100,80))
+            ventana.blit(imgLookMorty, (-50, 289))
+            mensajeEnPantalla("Mover", ventana, 130, 250, 50)
+            ventana.blit(imgBE, (480,100))
+            mensajeEnPantalla("Disparar", ventana, 510, 250, 50)
             opcion = boton("Regresar", 325, 520, 150, 50, BLANCO, NEGRO, ventana, "")
             if opcion == False:
                 nivel = 0
         pygame.display.update()
         reloj.tick(40)
     jugando = True
-
+    pygame.mixer.music.stop()
+    showMe.play()
     # ---------------------------Sprites--------------------------
 
     # Grupos de Sprites
@@ -226,20 +280,23 @@ def iniciar():
     puntuacion = 0
     vidas = 3
 
-    # Asteroides
-    def crearAsteroides(n, vMax):
+    # Generación de asteroides
+    def crearAsteroides(n, vMax, puntuacion):
+        puntuacion = puntuacion // 100
+        vMax += puntuacion
+        vMin = 0 + puntuacion
         for x in range(n):
             asteroide = pygame.sprite.Sprite()
             asteroide.image = imgAsteroide
             asteroide.rect = imgAsteroide.get_rect()
-            asteroide.rect.x = random.randint(0, ANCHO - asteroide.rect.width)
-            asteroide.rect.y = random.randint(-1000, -250)
+            asteroide.rect.x = random.randint(800, 2000)
+            asteroide.rect.y = random.randint(asteroide.rect.height, ALTO - asteroide.rect.height)
             asteroide.velocidad = random.randint(1, vMax)
             asteroide.timer = (random.randint(1,59))
             asteroides.add(asteroide)
             universo.add(asteroide)
     n = 30
-    crearAsteroides(n, 5)
+    crearAsteroides(n, 5, 0)
     # ---------------------------JUEGO----------------------------
     tiempoInicial = int(time.time())
     timer = 4/60
@@ -258,15 +315,12 @@ def iniciar():
                     disparofxFin.play()
         if vidas <= 0:
             jugando = False
-        if len(asteroides) <= 0 and n <= 200:
-            n += 50
-            crearAsteroides(n, 5)
 
         # Muestra el fondo de pantalla
         ventana.blit(imgFondo, (0,0))
         ventana.blit(imgFondo, (x, 0))
         ventana.blit(imgFondo, (ANCHO + x, 0))
-        x -= 1
+        x -= 5
         if x <= -ANCHO:
             x = 0
 
@@ -281,7 +335,7 @@ def iniciar():
         puntuacion, nuevos = validarChoqueDisparoAsteroide(disparos, asteroides, universo, puntuacion)
 
         # Crear nuevos asteroides si han sido destruidos
-        crearAsteroides(nuevos, random.randint(1,5))
+        crearAsteroides(nuevos, random.randint(1,5), puntuacion)
 
         # Actualiza los disparos
         actualizarDisparos(disparos)
@@ -295,11 +349,32 @@ def iniciar():
         # Muestra en pantalla información adicional
         mensajeEnPantalla("Puntuación: %d" % puntuacion, ventana, 550, 30, 40)
         mensajeEnPantalla("Vidas: %d" % vidas, ventana, 30, 30, 40)
+        if puntuacion % 500  == 0 and puntuacion > 0:
+            wubba.play()
+        pygame.display.update()
+        reloj.tick(60)
+    validarPuntuacion(puntuacion)
+    final = True
+    while final:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                final = False
+        ventana.blit(imgFondo, (0, 0))
+        ventana.blit(imgFondo, (x, 0))
+        ventana.blit(imgFondo, (ANCHO + x, 0))
+        x -= 5
+        if x <= -ANCHO:
+            x = 0
+        ventana.blit(imgGameOver, (200,93))
+        mensajeEnPantalla("Tu puntuación:", ventana, 150, 300, 60)
+        mensajeEnPantalla(str(puntuacion), ventana, 500, 300, 60)
+
+
         pygame.display.update()
         reloj.tick(60)
     pygame.quit()
 
-    validarPuntuacion(puntuacion)
+
 
 def main():
     iniciar()
