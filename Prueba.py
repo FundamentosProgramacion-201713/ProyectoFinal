@@ -5,9 +5,8 @@ screen = pygame.display.set_mode((640, 480))
 clock = pygame.time.Clock()
 done = False
 
-font = pygame.font.SysFont("comicsansms", 72)
 
-text = font.render("Hello, World", True, (0, 128, 0))
+text = font.render("Hello, World", True, (0, 0, 0))
 
 while not done:
     for event in pygame.event.get():
