@@ -1,0 +1,3 @@
+ASJD:600
+Irving:500
+Juan:400
