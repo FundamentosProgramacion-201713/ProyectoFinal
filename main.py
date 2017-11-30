@@ -260,7 +260,7 @@ def iniciar():
         reloj.tick(40)
     jugando = True
     pygame.mixer.music.stop()
-    pygame.mixer.music.load("Sonidos/stranger.mp3")
+    pygame.mixer.music.load("Sonidos/stranger.wav")
     pygame.mixer.music.set_volume(.5)
     pygame.mixer.music.play(0)
     showMe.play()
