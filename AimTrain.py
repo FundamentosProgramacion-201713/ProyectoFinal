@@ -117,18 +117,14 @@ def dibujar():
                             pygame.draw.rect(ventana, ROJO, ((ALTO // 2) + 55, (ALTO // 2) - 20, 90, 40), 1)
                             estado = "jugando"
                 elif estado == "jugando":
-                    xe, ye, anchoE, altoE = imgBlanco
-                    if xe >= xe and xe <= xe + anchoE:
-                        if ye >= ye and ye<= ye + altoE:
-                            estado = "menu"
-                    nuevo = pygame.sprite.Sprite()
-                    nuevo.image = imgBlanco
-                    nuevo.rect = imgBlanco.get_rect()
-                    nuevo.rect.left = mouseX
-                    nuevo.rect.top = mouseY
+                    if evento.type == pygame.MOUSEBUTTONDOWN:
+                        efecto.play()
+                        generarEnemigos(listaEnemigos, imgBlanco)
 
 
-                    listaEnemigos.append(nuevo)
+
+
+
 
 
         # Borrar pantalla
