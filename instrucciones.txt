@@ -1,0 +1,9 @@
+¡Bienvenido a protege-riquezas!
+Mueves a tu personaje
+utilizando las teclas 'A' y 'D'
+Disparas con el espacio
+Ten cuidado con tus vidas
+Si te roban tres veces
+¡Pierdes!
+¡Tu puntuación se
+guarda aún si pierdes!
