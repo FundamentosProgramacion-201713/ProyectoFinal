@@ -113,12 +113,13 @@ def dibujar():
                     xb, yb, anchoB, altoB = btnJugar.rect
                     if mouseX>=xb and mouseX <=xb + anchoB:
                         if mouseY >= yb and mouseY <= yb + altoB:
-                            pygame.draw.rect(ventana, ROJO, ((ALTO // 2) + 55, (ALTO // 2) - 20, 90, 40), 1)
+
                             estado = "jugando"
                 elif estado == "jugando":
                     if evento.type == pygame.MOUSEBUTTONDOWN:
                         efecto.play()
                         generarEnemigos(listaEnemigos, imgBlanco)
+
 
 
 
