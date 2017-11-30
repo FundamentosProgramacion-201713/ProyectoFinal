@@ -1,0 +1,11 @@
+sufijo,puntaje
+ero,2634
+ndo,1700
+ero,1500
+rto,1000
+nto,888
+xto,750
+imo,555
+avo,420
+eno,404
+imo,101
