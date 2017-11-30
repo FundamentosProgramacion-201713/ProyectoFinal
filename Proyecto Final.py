@@ -198,7 +198,6 @@ def jugar (): # Función dónde se está programando el juego.
 
     #Imagenes.
     imgFondoJuego = pygame.image.load("juego.png")  #Imagen  de fondo jugando
-    imgFondoGanaste = pygame.image.load("ganaste.png")  #Imagen de fondo ganaste
     imgElmer = pygame.image.load("elmer.png")   #Imagen personaje bueno
     imgBugs = pygame.image.load("bugs.png")     #Imagen personaje enemigo
     imgBala = pygame.image.load("bullet.png")   #Imagen de la bala
