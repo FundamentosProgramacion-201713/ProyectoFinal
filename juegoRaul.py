@@ -195,7 +195,7 @@ def dibujar():
     while not termina:
         # Procesa los eventos que recibe
         for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
+            if evento.type == pygame.QUIT:  # El usuario hizo click en el botón de salir
                 termina = True
             elif evento.type==pygame.MOUSEBUTTONDOWN:
                 #el usuario hizo click con el mouse
@@ -225,7 +225,8 @@ def dibujar():
                     if xm >= xB and xm <= xB + anchoB:
                         if ym >= yB and ym <= yB + altoB:
                             # cambiar a ventana
-                            estado = "menu"
+                            estado = "menu"#hacer 2 botonbes que me marque el si o el no y hacer otra captura de pantalla.
+                elif estado=="Jugando":
                     enemigo = pygame.sprite.Sprite()
                     enemigo.image = imgEnemigo
                     enemigo.rect = imgEnemigo.get_rect()
@@ -280,7 +281,7 @@ def dibujar():
             aux+1
 
         timer += 1 / 40
-        if timer >= .5:
+        if timer >= 1:
             timer = 0
             generarEnemigoAzar(listaEnemigos, imgEnemigo)
 
