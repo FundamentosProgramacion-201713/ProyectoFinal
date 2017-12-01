@@ -1,6 +1,6 @@
 # encoding: UTF-8
 # Autor: Ángel Guillermo Ortiz González
-# Videojuego proyecto final
+# Videojuego proyecto final Fundamentos de programación 201713
 
 import pygame
 from random import randint
@@ -11,38 +11,56 @@ ALTO = 600
 
 # Colores
 BLANCO = (255,255,255)  # R,G,B en el rango [0,255]
-NEGRO = (0,0,0)
 
 def generarColor():
     return (randint(0,255),randint(0,255),randint(0,255))
 
-def dibujarMenu(ventana, botonJugar,botonRecords,botonCreditos,botonControles):
+def dibujarMenu(ventana, botonJugar,botonCreditos):
     ventana.blit(botonJugar.image,botonJugar.rect) # boton jugar
-    ventana.blit(botonRecords.image,botonRecords.rect) # boton records
     ventana.blit(botonCreditos.image,botonCreditos.rect) # boton créditos
-    ventana.blit(botonControles.image,botonControles.rect) # botón controles
+
+    fuente = pygame.font.SysFont("monospace", 24)
+    titulo = fuente.render("Controles: ", 1, BLANCO)
+    w = fuente.render("W ----------------- ARRIBA", 1, BLANCO)
+    a = fuente.render("A ----------------- ATRÁS", 1, BLANCO)
+    s = fuente.render("S ----------------- ABAJO", 1, BLANCO)
+    d = fuente.render("D ----------------- DELANTE", 1, BLANCO)
+    space = fuente.render("BARRA ESPACIADORA ----------------- PODER ESPECIAL",1,BLANCO)
+    ventana.blit(titulo, ((ANCHO // 2 - 40), ALTO//2 + 60))
+    ventana.blit(w, (ANCHO // 2 - 62, ALTO//2 + 80))
+    ventana.blit(a, (ANCHO // 2 - 60, ALTO//2 + 100))
+    ventana.blit(s, (ANCHO // 2 - 60, ALTO//2 + 120))
+    ventana.blit(d, (ANCHO // 2 - 60, ALTO//2 + 140))
+    ventana.blit(space, (ANCHO // 2 - 236, ALTO // 2 + 160))
 
     colorAleatorio = generarColor()
     fuente = pygame.font.SysFont("monospace", 80) # título del juego
+    fuenteb = pygame.font.SysFont("monospace", 40)
     texto1 = fuente.render("Pantuflas,", 1,colorAleatorio)
     texto2 = fuente.render("el viajero espacial",1,colorAleatorio)
-    ventana.blit(texto1, ((ANCHO//2)-220, 80))
-    ventana.blit(texto2, ((ANCHO//2)-220, 130))
+    inst = fuenteb.render("AYUDA A PANTUFLAS A VOLVER A CASA",1,colorAleatorio)
+    ventana.blit(texto1, ((ANCHO//2)-250, 80))
+    ventana.blit(texto2, ((ANCHO//2)-250, 130))
+    ventana.blit(inst, (ANCHO // 2 - 280, ALTO//2 + 200))
 
-def dibujarJuego(ventana, listaEnemigos, pantuflas,timer,vidas,cronometro,puntaje):
+
+def dibujarJuego(ventana,listaEnemigos,pantuflas,vidas,cronometro,puntaje,tiempoPoder,cargaPoder):
     for enemigo in listaEnemigos:
         ventana.blit(enemigo.image,enemigo.rect)
     ventana.blit(pantuflas.image,pantuflas.rect)
 
     fuente = pygame.font.SysFont("monospace",24)
-    temporizador = fuente.render("%.2f" % timer,1,BLANCO)
     tiempo = fuente.render("Tiempo restante: %.d" % cronometro, 1, BLANCO)
     lifes = fuente.render("Vidas: " +str(vidas),1,BLANCO)
     score = fuente.render("Puntaje: " +str(puntaje),1,BLANCO)
-    ventana.blit(temporizador,(ANCHO-200,20))
+    powertime = fuente.render("Invencible por: %.d s" % tiempoPoder,1,BLANCO)
+    powercharge = fuente.render("Tiempo de carga: %.d s" % cargaPoder,1,BLANCO)
     ventana.blit(tiempo, (ANCHO-200,50))
     ventana.blit(lifes, (ANCHO-200,80))
     ventana.blit(score, (ANCHO-200,110))
+    ventana.blit(powercharge,(ANCHO-200,140))
+    if cargaPoder < 1:
+        ventana.blit(powertime,(ANCHO-200,170))
 
 def generarEnemigoAzar(listaEnemigos, imgEnemigo):
     enemigo = pygame.sprite.Sprite()
@@ -53,60 +71,64 @@ def generarEnemigoAzar(listaEnemigos, imgEnemigo):
     enemigo.rect.top = cy
     listaEnemigos.append(enemigo)
 
-def actualizarEnemigos(listaEnemigos,pantuflas,vidas):
+def actualizarEnemigos(listaEnemigos,pantuflas,vidas,poder,tiempoPoder,puntaje,cargaPoder):
     for enemigo in listaEnemigos:
         enemigo.rect.left -= 10
         if enemigo.rect.left < -enemigo.rect.width or enemigo.rect.colliderect(pantuflas):
             listaEnemigos.remove(enemigo)
-        if enemigo.rect.colliderect(pantuflas):
-            vidas -= 1
-    return vidas
 
-def activarPoder(puntaje,listaEnemigos,pantuflas):
-    for enemigo in listaEnemigos:
-        if enemigo.rect.colliderect(pantuflas):
-            puntaje += 1
-    return puntaje
+        if poder:
+            cargaPoder = 0
+            if enemigo.rect.colliderect(pantuflas):
+                puntaje += 1
 
-def dibujarRecords(ventana,botonMenu):
-    fuente = pygame.font.SysFont("monospace", 70)
-    texto = fuente.render("Récords: ", 1, BLANCO)
-    ventana.blit(texto, ((ANCHO//2)-220, 100))
-    ventana.blit(botonMenu.image,botonMenu.rect) # boton menú
+            if tiempoPoder >= 0:
+                tiempoPoder -= 1 / 40
+            elif tiempoPoder < 0:
+                poder = False
+
+        if not poder:
+            cargaPoder += 1 / 40
+            tiempoPoder = cargaPoder
+            if enemigo.rect.colliderect(pantuflas):
+                vidas -= 1
+    return vidas,puntaje,tiempoPoder,cargaPoder
 
 def dibujarCreditos(ventana,botonMenu):
-    fuente = pygame.font.SysFont("monospace", 70)
-    texto = fuente.render("Créditos: ", 1, BLANCO)
+    fuentet = pygame.font.SysFont("monospace",70)
+    fuentec = pygame.font.SysFont("monospace",30)
+    titulo = fuentet.render("Créditos: ", 1, BLANCO)
+    dany = fuentec.render('Daniela Hernández Méndez -------- Diseño y coloreado "Pantuflas"',1,BLANCO)
+    benji = fuentec.render('Benjamín Rodríguez Vázquez -------- Música de fondo',1,BLANCO)
+    extras = fuentec.render('pixabay.com -------- Naves e imagen de fondo',1,BLANCO)
+    io = fuentec.render('Ángel Guillermo Ortiz González -------- Programación y compilado',1,BLANCO)
+    py = fuentec.render('Hecho en pygame',1,BLANCO)
 
-    ventana.blit(texto, ((ANCHO//2)-220, 100))
+    ventana.blit(titulo, (ANCHO//2 - 350,110))
+    ventana.blit(dany, (ANCHO//2 - 350,180))
+    ventana.blit(benji, (ANCHO//2 - 350,210))
+    ventana.blit(extras, (ANCHO//2 - 350,240))
+    ventana.blit(io, (ANCHO//2 - 350,270))
+    ventana.blit(py, (ANCHO//2 - 350,330))
+
     ventana.blit(botonMenu.image,botonMenu.rect) # boton menú
 
-def dibujarControles(ventana, botonMenu):
-    fuente = pygame.font.SysFont("monospace", 70)
-    titulo = fuente.render("Controles: ", 1, BLANCO)
-    w = fuente.render("W --------- ARRIBA",1,BLANCO)
-    a = fuente.render("A --------- ATRÁS",1,BLANCO)
-    s = fuente.render("S --------- ABAJO",1,BLANCO)
-    d = fuente.render("D --------- DELANTE",1,BLANCO)
-    ventana.blit(titulo, ((ANCHO // 2), 100))
-    ventana.blit(w, ((ANCHO // 2), 200))
-    ventana.blit(a, ((ANCHO // 2), 250))
-    ventana.blit(s, ((ANCHO // 2), 300))
-    ventana.blit(d, ((ANCHO // 2), 350))
-    ventana.blit(botonMenu.image, botonMenu.rect)  # boton menú
-
-def dibujarFinMalo(ventana,botonMenu,botonReintentar):
+def dibujarFinMalo(ventana,botonMenu,botonReintentar,pantuflasT):
     fuente = pygame.font.SysFont("monospace", 50)
     texto = fuente.render("Pantuflas no pudo llegar a casa. :-(",1,BLANCO)
     ventana.blit(texto,((ANCHO//2)-220, 150))
     ventana.blit(botonMenu.image,botonMenu.rect)
     ventana.blit(botonReintentar.image,botonReintentar.rect)
+    ventana.blit(pantuflasT.image,pantuflasT.rect)
 
-def dibujarFinBueno(ventana, botonMenu):
+def dibujarFinBueno(ventana, botonMenu,pantuflasG,planeta):
     fuente = pygame.font.SysFont("monospace", 50)
     texto = fuente.render("Pantuflas llegó a casa. :-D",1,BLANCO)
     ventana.blit(texto,((ANCHO//2)-220,150))
     ventana.blit(botonMenu.image,botonMenu.rect)
+
+    ventana.blit(pantuflasG.image,pantuflasG.rect)
+    ventana.blit(planeta.image,planeta.rect)
 
 def dibujar():
     # Inicio de pygame
@@ -120,8 +142,8 @@ def dibujar():
     x = 0  # inicio fondo
     timer = 0
     poder = False
-    cargaPoder = 0
-    tiempoPoder = 10
+    cargaPoder = 1
+    tiempoPoder = 0
     vidas = 3
     puntaje = 0
     moverPantuflasLateral = False
@@ -139,14 +161,17 @@ def dibujar():
 
     # Cargar imágenes botones
     imgBtnJugar = pygame.image.load("images/button_jugar.png")
-    imgBtnRecords = pygame.image.load("images/button_records.png")
     imgBtnCreditos = pygame.image.load("images/button_creditos.png")
     imgBtnMenu = pygame.image.load("images/button_menu.png")
     imgBtnReintentar = pygame.image.load("images/button_reintentar.png")
-    imgBtnControles = pygame.image.load("images/button_controles.png")
 
     # Cargar imagen Pantuflas
-    imgPantuflas = pygame.image.load("images/pantuflas-el-perro.png") # cambiar a .png cuando Dany
+    imgPantuflas = pygame.image.load("images/pantuflas-el-perro.png") # nave
+    imgPantuflasG = pygame.image.load("images/pantuflas-ganador.png") # al ganar sale
+    imgPantuflasT = pygame.image.load("images/pantuflas-triste.png") # al ganar sale
+
+    # Cargar imagen planeta
+    imgPlaneta = pygame.image.load("images/planeta.png")
 
     # Enemigos
     listaEnemigos = []
@@ -160,20 +185,8 @@ def dibujar():
     botonJugar = pygame.sprite.Sprite()
     botonJugar.image = imgBtnJugar
     botonJugar.rect = imgBtnJugar.get_rect()
-    botonJugar.rect.left = ANCHO // 2 - botonJugar.rect.width//2
-    botonJugar.rect.top = ALTO // 2 - 3*botonJugar.rect.height//2
-
-    botonControles = pygame.sprite.Sprite()
-    botonControles.image = imgBtnControles
-    botonControles.rect = imgBtnControles.get_rect()
-    botonControles.rect.left = ANCHO // 2 - botonControles.rect.width//2
-    botonControles.rect.top = ALTO // 2 + 3*botonControles.rect.height//2
-
-    botonRecords = pygame.sprite.Sprite()
-    botonRecords.image = imgBtnRecords
-    botonRecords.rect = imgBtnRecords.get_rect()
-    botonRecords.rect.left = ANCHO // 2 - botonRecords.rect.width - 20
-    botonRecords.rect.top = ALTO // 2
+    botonJugar.rect.left = ANCHO // 2 - 20 - botonJugar.rect.width
+    botonJugar.rect.top = ALTO // 2
 
     botonCreditos = pygame.sprite.Sprite()
     botonCreditos.image = imgBtnCreditos
@@ -199,6 +212,24 @@ def dibujar():
     pantuflas.rect.left = 50
     pantuflas.rect.top = ALTO // 2 - pantuflas.rect.height//2
 
+    pantuflasG = pygame.sprite.Sprite()
+    pantuflasG.image = imgPantuflasG
+    pantuflasG.rect = imgPantuflasG.get_rect()
+    pantuflasG.rect.left = ANCHO // 2 - 5*pantuflasG.rect.width//4
+    pantuflasG.rect.top = 200
+
+    pantuflasT = pygame.sprite.Sprite()
+    pantuflasT.image = imgPantuflasT
+    pantuflasT.rect = imgPantuflasT.get_rect()
+    pantuflasT.rect.left = ANCHO // 2 - pantuflasT.rect.width//2
+    pantuflasT.rect.top = ALTO // 2 - pantuflasT.rect.height//2
+
+    planeta = pygame.sprite.Sprite()
+    planeta.image = imgPlaneta
+    planeta.rect = imgPlaneta.get_rect()
+    planeta.rect.left = ANCHO // 2 + 50
+    planeta.rect.top = 200
+
     while not termina:
         # Procesa los eventos que recibe
         for evento in pygame.event.get():
@@ -211,31 +242,19 @@ def dibujar():
 
                 if estado == "menu":
                     xbJ, ybJ, anchoBJ, altoBJ = botonJugar.rect
-                    xbR, ybR, anchoBR, altoBR = botonRecords.rect
                     xbC, ybC, anchoBC, altoBC = botonCreditos.rect
-                    xBcontrol, ybcontrol, anchoBcontrol, altoBcontrol = botonControles.rect
 
                     if xbJ <= xm <= xbJ+anchoBJ:
                         if ybJ <= ym <= ybJ+altoBJ:
                             # Cambiar de ventana
                             estado = "jugando"
 
-                    elif xbR <= xm <= xbR + anchoBR:
-                        if ybR <= ym <= ybR + altoBR:
-                            # Cambiar de ventana
-                            estado = "records"
-
                     elif xbC <= xm <= xbC + anchoBC:
                         if ybC <= ym <= ybC + altoBC:
                             # Cambiar de ventana
                             estado = "creditos"
 
-                    elif xBcontrol <= xm <= xBcontrol + anchoBcontrol:
-                        if ybcontrol <= ym <= ybcontrol + altoBcontrol:
-                            # Cambiar ventana
-                            estado = "controles"
-
-                elif estado == "records" or estado == "creditos" or estado == "controles":
+                elif estado == "creditos":
                     xbM, ybM, anchoBM, altoBM = botonMenu.rect
 
                     if xbM <= xm <= xbM+anchoBM:
@@ -296,19 +315,23 @@ def dibujar():
 
         # Dibujar, aquí haces todos los trazos que requieras
         if estado == "menu":
-            dibujarMenu(ventana,botonJugar,botonRecords,botonCreditos,botonControles)
+            dibujarMenu(ventana,botonJugar,botonCreditos)
             timer = 0
-            cronometro = 90
+            cronometro = 93
             vidas = 3
+            puntaje = 0
+            poder = False
+            cargaPoder = 1
+            tiempoPoder = 0
             moverPantuflasLateral = False
             moverPantuflasVertical = False
 
         elif estado == "jugando":
-            vidas = actualizarEnemigos(listaEnemigos,pantuflas,vidas) # Mover enemigos
-            dibujarJuego(ventana,listaEnemigos,pantuflas,timer,vidas,cronometro,puntaje)
+            vidas,puntaje,tiempoPoder,cargaPoder = actualizarEnemigos(listaEnemigos,pantuflas,vidas,poder,tiempoPoder,puntaje,cargaPoder) # Mover enemigos
+            dibujarJuego(ventana,listaEnemigos,pantuflas,vidas,cronometro,puntaje,tiempoPoder,cargaPoder)
             timer += 1 / 40
             cronometro -= 1 / 40
-            if timer >= 1 and cronometro > 80: # Generar enemigos cada segundo
+            if timer >= 1 and 80 < cronometro < 90: # Generar enemigos cada segundo
                 timer = 0
                 generarEnemigoAzar(listaEnemigos, imgEnemigo1)
             elif timer >= 1 and 60 < cronometro <= 80: # Generar enemigos cada segundo
@@ -332,18 +355,9 @@ def dibujar():
                 timer = 0
                 generarEnemigoAzar(listaEnemigos,imgEnemigo1)
                 generarEnemigoAzar(listaEnemigos,imgEnemigo5)
-            elif timer >= 0.5 and 0 < cronometro <= 10: # Generar enemigos cada medio segundo
+            elif timer >= 0.3 and 0 < cronometro <= 10: # Generar enemigos cada medio segundo
                 timer = 0
                 generarEnemigoAzar(listaEnemigos,imgEnemigo1)
-
-            if poder:
-                if tiempoPoder > 0:
-                    tiempoPoder -= 1 / 40
-                    puntaje = activarPoder(puntaje, listaEnemigos, pantuflas)
-                elif tiempoPoder == 0:
-                    cargaPoder = 30
-                    tiempoPoder = 10
-                    poder = False
 
             if moverPantuflasLateral:
                 pantuflas.rect.left += dx
@@ -357,26 +371,30 @@ def dibujar():
             if pantuflas.rect.top <= 0 or pantuflas.rect.top >= ALTO - pantuflas.rect.height:
                 moverPantuflasVertical = False
                 dy = 0
-                
+
             if vidas == 0:
                 estado = "finMalo"
             if cronometro <= 0:
                 estado = "finBueno"
 
-        elif estado == "records":
-            dibujarRecords(ventana,botonMenu)
         elif estado == "creditos":
             dibujarCreditos(ventana,botonMenu)
-        elif estado == "controles":
-            dibujarControles(ventana,botonMenu)
         elif estado == "finMalo":
-            dibujarFinMalo(ventana,botonMenu,botonReintentar)
+            dibujarFinMalo(ventana,botonMenu,botonReintentar,pantuflasT)
             vidas = 3
-            cronometro = 90
+            cronometro = 93
+            puntaje = 0
+            poder = False
+            cargaPoder = 1
+            tiempoPoder = 0
         elif estado == "finBueno":
-            dibujarFinBueno(ventana,botonMenu)
+            dibujarFinBueno(ventana,botonMenu,pantuflasG,planeta)
             vidas = 3
-            cronometro = 90
+            cronometro = 93
+            puntaje = 0
+            poder = False
+            cargaPoder = 1
+            tiempoPoder = 0
 
         pygame.display.flip()   # Actualiza trazos
         reloj.tick(40)          # 40 fps
