@@ -1,4 +1,5 @@
-import random
+#Anaid Fernanda Labat González 01746289
+mport random
 
 IMÁGENES_AHORCADO = ['''
 
