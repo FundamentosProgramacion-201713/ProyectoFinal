@@ -19,11 +19,11 @@ def estructurar_Menu(ventana, botonJugar,titulo):
     ventana.blit(botonJugar.image, botonJugar.rect)
     ventana.blit(titulo.image, titulo.rect)
 
-
+# Se estructura el fondo
 def estructurar_Fondo_Menu(ventana, imagenFondo1):
     ventana.blit(imagenFondo1, (0, 0))
 
-
+#La funcion da la estructura al juego
 def estructurar_Juego(ventana, lista_Enemigos, lista_Proyectil):
     global movx, movy, derecha
     for enemigo in lista_Enemigos:
@@ -50,7 +50,7 @@ def estructurar_Juego(ventana, lista_Enemigos, lista_Proyectil):
 
 
 
-
+#La funcion actualiza el lazer
 def actualizar_Proyectil(lista_Proyectil, lista_Enemigos):
     for lazer in lista_Proyectil:
         lazer.rect.top -= 20
@@ -86,7 +86,7 @@ def generar_Enemigos(lista_Enemigos, imagen_Enemigo):
 
 
 
-
+# La funcion analiza el puntaje si se le acierta al enemigo
 def analizarPuntaje(lista_Proyectil, lista_Enemigos, Puntaje):
     for lazer in lista_Proyectil:
         lazer.rect.top -= 20
@@ -191,6 +191,7 @@ def dibujar():
                             # Cambiar de ventana
                             estado = "jugando"
 
+                # Si se esta jugando se dibuja al enemigo
                 elif estado == "jugando":
                     alien1 = pygame.sprite.Sprite()
                     alien1.image = imagen_Enemigo1
@@ -199,7 +200,7 @@ def dibujar():
                     alien1.rect.top = ym - ALTO // 2
 
 
-
+            # Posicion y disparo del lazer
             elif evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_SPACE:
                     efecto_Lazer.play()
@@ -235,12 +236,10 @@ def dibujar():
             # Dibujar al DEFENSOR
             ventana.blit(imagen_Defensor, (coordenadax_Defensor - 39, ALTO - 86))
             coordenadax_Defensor, yDefensor = pygame.mouse.get_pos()
-
-            # Barra de datos
-            fuente = pygame.font.SysFont("Arial", 20)
+            #Informacion acerca de puntos y tiempo
+            fuente = pygame.font.SysFont("Helvetica", 20, "negrita cursiva")
             tiempo = fuente.render("Tiempo: " + str(("%.2f") % timer), 1, VERDE_LIMON)
             ventana.blit(tiempo, (40, 5))
-
             puntos = fuente.render("Puntuación: " + str(Puntaje), 1, VERDE_LIMON)
             ventana.blit(puntos, (ANCHO - 250, 5))
 
