@@ -1,0 +1,94 @@
+import pygame
+
+ANCHO = 800
+ALTO = 600
+BLANCO = (255,255,255)
+NEGRO = (0,0,0)
+
+
+def dibujarMenu(ventana, boton):
+    ventana.blit(boton.img,boton.rect )
+
+
+
+def dibujarJuego(ventana,fondoMar):
+    ventana.fill(BLANCO)
+    ventana.blit(fondoMar,(0,0))
+
+
+
+def dibujar():
+    # Ejemplo del uso de pygame
+    # sonidos obtenidos de: http://www.sonidosmp3gratis.com
+    mov = 0
+    estado = 0
+    movPezx = 0
+    movPezy = 0
+
+    pygame.init()   # Inicializa pygame
+    ventana = pygame.display.set_mode((ANCHO, ALTO))    # Crea la ventana de dibujo
+    reloj = pygame.time.Clock() # Para limitar los fps
+    termina = False # Bandera para saber si termina la ejecución
+
+    jugar = pygame.image.load("boton.png")  # imagen obtenida de: https://dabuttonfactory.com/
+
+    boton = pygame.sprite.Sprite()
+    boton.img = jugar
+    boton.rect = jugar.get_rect()
+    boton.rect.left = ANCHO//2-boton.rect.width//2
+    boton.rect.top = ALTO//2-boton.rect.height//2
+
+    fondoMar = pygame.image.load("fm.jpg") #imagen obtenida de: https://www.google.com.mx/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwiS5YCY6OLXAhUIPCYKHS8fB1YQjBwIBA&url=http%3A%2F%2Fimagenes.4ever.eu%2Fdata%2Fdownload%2Fanimados%2Ffondo-del-mar-189765.jpg&psig=AOvVaw0LUxhn4Atm04XYli1BMFPp&ust=1512011564789671
+    burbujas = pygame.mixer.Sound("burbujas.mp3")
+
+    while not termina:
+        # Procesa los eventos que recibe
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:  # El usuario hizo click en el botón de salir
+                termina = True
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                xm,ym = pygame.mouse.get_pos()
+                xb,yb,anchoB,altoB = boton.rect
+                if xm >= xb and xm<=xb+anchoB:
+                    if ym>=yb and ym<=yb + altoB:
+                        estado = 1
+
+            elif evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_UP:
+                    movPezx-=10
+                    burbujas.play()
+                elif evento.key == pygame.K_DOWN:
+                    movPezx += 10
+                elif evento.key == pygame.K_LEFT:
+                    movPezy -= 10
+                elif evento.key == pygame.K_RIGHT:
+                    movPezy += 10
+
+
+
+
+
+        if estado == 0:
+            fondo = pygame.image.load("fondo.jpg")  # imagen obtenida de: https://professor-falken.com/wp-content/uploads/2017/01/noche-estrellas-espacio-constelacion-galaxia-universo-Fondos-de-Pantalla-HD-professor-falken.com_.jpg
+            ventana.blit(fondo,(mov,0))
+            dibujarMenu(ventana,boton)
+            mov -= 1
+            
+        if estado == 1:
+            dibujarJuego(ventana,fondoMar)
+
+
+
+
+
+        pygame.display.flip()
+        reloj.tick(40)
+
+    pygame.quit()
+
+
+def main():
+    dibujar()
+
+
+main()
